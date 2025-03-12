@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.35906.104 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestBulkDbLibraries", "TestBulkDbLibraries\TestBulkDbLibraries.csproj", "{0C5BC747-7C07-4EE8-B0D4-76E57E0F4416}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0C5BC747-7C07-4EE8-B0D4-76E57E0F4416}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0C5BC747-7C07-4EE8-B0D4-76E57E0F4416}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0C5BC747-7C07-4EE8-B0D4-76E57E0F4416}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0C5BC747-7C07-4EE8-B0D4-76E57E0F4416}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {5FC72535-29EE-460D-AE0E-A7ED05407EA8}
+	EndGlobalSection
+EndGlobal
