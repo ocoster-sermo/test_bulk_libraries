@@ -13,10 +13,25 @@ public class Employee : EntityBase
     public int? ProviderSettingsId { get; set; }
     public EmployeeStatus Status { get; set; }
     public bool EligibleForBonus { get; set; }
+    public List<Promotion>? Promotions { get; set; }
 
     public override void Map(ModelBuilder modelBuilder)
     {
         modelBuilder
             .Entity<Employee>();
+
+        modelBuilder
+            .Entity<Employee>()
+            .OwnsMany(m => m.Promotions, ob =>
+            {
+                ob.ToJson();
+            });
     }
+}
+
+public record Promotion
+{
+    public required string FromLevel { get; set; }
+
+    public required string ToLevel { get; set; }
 }

@@ -2,6 +2,41 @@
   "version": 3,
   "targets": {
     "net8.0": {
+      "EFCore.BulkExtensions.Core/8.1.3": {
+        "type": "package",
+        "dependencies": {
+          "MedallionTopologicalSort": "1.0.0",
+          "Microsoft.EntityFrameworkCore.Relational": "8.0.13",
+          "NetTopologySuite": "2.5.0"
+        },
+        "compile": {
+          "lib/net8.0/EFCore.BulkExtensions.Core.dll": {
+            "related": ".pdb;.xml"
+          }
+        },
+        "runtime": {
+          "lib/net8.0/EFCore.BulkExtensions.Core.dll": {
+            "related": ".pdb;.xml"
+          }
+        }
+      },
+      "EFCore.BulkExtensions.PostgreSql/8.1.3": {
+        "type": "package",
+        "dependencies": {
+          "EFCore.BulkExtensions.Core": "8.1.3",
+          "Npgsql.EntityFrameworkCore.PostgreSQL": "8.0.11"
+        },
+        "compile": {
+          "lib/net8.0/EFCore.BulkExtensions.PostgreSql.dll": {
+            "related": ".pdb;.xml"
+          }
+        },
+        "runtime": {
+          "lib/net8.0/EFCore.BulkExtensions.PostgreSql.dll": {
+            "related": ".pdb;.xml"
+          }
+        }
+      },
       "EFCore.NamingConventions/9.0.0": {
         "type": "package",
         "dependencies": {
@@ -16,16 +51,17 @@
           "lib/net8.0/EFCore.NamingConventions.dll": {}
         }
       },
-      "EntityFrameworkCore.PostgreSQL.SimpleBulks/8.0.0-preview.5": {
+      "MedallionTopologicalSort/1.0.0": {
         "type": "package",
-        "dependencies": {
-          "Npgsql.EntityFrameworkCore.PostgreSQL": "8.0.0"
-        },
         "compile": {
-          "lib/net8.0/EntityFrameworkCore.PostgreSQL.SimpleBulks.dll": {}
+          "lib/netstandard2.0/MedallionTopologicalSort.dll": {
+            "related": ".xml"
+          }
         },
         "runtime": {
-          "lib/net8.0/EntityFrameworkCore.PostgreSQL.SimpleBulks.dll": {}
+          "lib/netstandard2.0/MedallionTopologicalSort.dll": {
+            "related": ".xml"
+          }
         }
       },
       "Microsoft.EntityFrameworkCore/9.0.3": {
@@ -708,6 +744,22 @@
           "buildTransitive/net8.0/_._": {}
         }
       },
+      "NetTopologySuite/2.5.0": {
+        "type": "package",
+        "dependencies": {
+          "System.Memory": "4.5.4"
+        },
+        "compile": {
+          "lib/netstandard2.0/NetTopologySuite.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/netstandard2.0/NetTopologySuite.dll": {
+            "related": ".xml"
+          }
+        }
+      },
       "Npgsql/9.0.3": {
         "type": "package",
         "dependencies": {
@@ -807,6 +859,15 @@
           "buildTransitive/net8.0/_._": {}
         }
       },
+      "System.Memory/4.5.4": {
+        "type": "package",
+        "compile": {
+          "ref/netcoreapp2.1/_._": {}
+        },
+        "runtime": {
+          "lib/netcoreapp2.1/_._": {}
+        }
+      },
       "System.Text.Encodings.Web/9.0.2": {
         "type": "package",
         "compile": {
@@ -852,6 +913,40 @@
     }
   },
   "libraries": {
+    "EFCore.BulkExtensions.Core/8.1.3": {
+      "sha512": "UpmpUsW9UByOSpYhC3FrC+W1dUZFLMdDseh+SZzz7GaF6zULjKowfuzN/XmYNhdqeZ3hwyXn1tSUE9fAs6HPiQ==",
+      "type": "package",
+      "path": "efcore.bulkextensions.core/8.1.3",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "EFCoreBulk.png",
+        "LICENSE.txt",
+        "README.md",
+        "efcore.bulkextensions.core.8.1.3.nupkg.sha512",
+        "efcore.bulkextensions.core.nuspec",
+        "lib/net8.0/EFCore.BulkExtensions.Core.dll",
+        "lib/net8.0/EFCore.BulkExtensions.Core.pdb",
+        "lib/net8.0/EFCore.BulkExtensions.Core.xml"
+      ]
+    },
+    "EFCore.BulkExtensions.PostgreSql/8.1.3": {
+      "sha512": "GVhaj0lU+J9ThhiFb4YYwQx0o7Y9/6JPXNazdu8deQQVzV6OvZdQIZSizpClQO64snvfpBpb5Hi6Fky29i0JMg==",
+      "type": "package",
+      "path": "efcore.bulkextensions.postgresql/8.1.3",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "EFCoreBulk.png",
+        "LICENSE.txt",
+        "README.md",
+        "efcore.bulkextensions.postgresql.8.1.3.nupkg.sha512",
+        "efcore.bulkextensions.postgresql.nuspec",
+        "lib/net8.0/EFCore.BulkExtensions.PostgreSql.dll",
+        "lib/net8.0/EFCore.BulkExtensions.PostgreSql.pdb",
+        "lib/net8.0/EFCore.BulkExtensions.PostgreSql.xml"
+      ]
+    },
     "EFCore.NamingConventions/9.0.0": {
       "sha512": "heKIYzPdEWx+Ba4xuG6jfEssW9rEi7I0lX38eoN7wo7qgg9uw7nn8UEmDQfwGEYPzSDpetCVANnDr5tqt2Asjg==",
       "type": "package",
@@ -864,17 +959,19 @@
         "lib/net8.0/EFCore.NamingConventions.dll"
       ]
     },
-    "EntityFrameworkCore.PostgreSQL.SimpleBulks/8.0.0-preview.5": {
-      "sha512": "Dv9kzb0Bd5wqbRErhNefCmQPms1alfAkXNQfL4ra6QuXD4q4KM3Z0h2DaXyo8QTOQJBHNPB13UyxDpZZb3POpA==",
+    "MedallionTopologicalSort/1.0.0": {
+      "sha512": "dcAqM8TcyZQ/T466CvqNMUUn/G0FQE+4R7l62ngXH7hLFP9yA7yoP/ySsLgiXx3pGUQC3J+cUvXmJOOR/eC+oQ==",
       "type": "package",
-      "path": "entityframeworkcore.postgresql.simplebulks/8.0.0-preview.5",
+      "path": "medalliontopologicalsort/1.0.0",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
-        "LICENSE",
-        "entityframeworkcore.postgresql.simplebulks.8.0.0-preview.5.nupkg.sha512",
-        "entityframeworkcore.postgresql.simplebulks.nuspec",
-        "lib/net8.0/EntityFrameworkCore.PostgreSQL.SimpleBulks.dll"
+        "lib/net45/MedallionTopologicalSort.dll",
+        "lib/net45/MedallionTopologicalSort.xml",
+        "lib/netstandard2.0/MedallionTopologicalSort.dll",
+        "lib/netstandard2.0/MedallionTopologicalSort.xml",
+        "medalliontopologicalsort.1.0.0.nupkg.sha512",
+        "medalliontopologicalsort.nuspec"
       ]
     },
     "Microsoft.EntityFrameworkCore/9.0.3": {
@@ -1831,6 +1928,20 @@
         "useSharedDesignerContext.txt"
       ]
     },
+    "NetTopologySuite/2.5.0": {
+      "sha512": "5/+2O2ADomEdUn09mlSigACdqvAf0m/pVPGtIPEPQWnyrVykYY0NlfXLIdkMgi41kvH9kNrPqYaFBTZtHYH7Xw==",
+      "type": "package",
+      "path": "nettopologysuite/2.5.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "icon.png",
+        "lib/netstandard2.0/NetTopologySuite.dll",
+        "lib/netstandard2.0/NetTopologySuite.xml",
+        "nettopologysuite.2.5.0.nupkg.sha512",
+        "nettopologysuite.nuspec"
+      ]
+    },
     "Npgsql/9.0.3": {
       "sha512": "tPvY61CxOAWxNsKLEBg+oR646X4Bc8UmyQ/tJszL/7mEmIXQnnBhVJZrZEEUv0Bstu0mEsHZD5At3EO8zQRAYw==",
       "type": "package",
@@ -1957,6 +2068,29 @@
         "useSharedDesignerContext.txt"
       ]
     },
+    "System.Memory/4.5.4": {
+      "sha512": "1MbJTHS1lZ4bS4FmsJjnuGJOu88ZzTT2rLvrhW7Ygic+pC0NWA+3hgAen0HRdsocuQXCkUTdFn9yHJJhsijDXw==",
+      "type": "package",
+      "path": "system.memory/4.5.4",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE.TXT",
+        "THIRD-PARTY-NOTICES.TXT",
+        "lib/net461/System.Memory.dll",
+        "lib/net461/System.Memory.xml",
+        "lib/netcoreapp2.1/_._",
+        "lib/netstandard1.1/System.Memory.dll",
+        "lib/netstandard1.1/System.Memory.xml",
+        "lib/netstandard2.0/System.Memory.dll",
+        "lib/netstandard2.0/System.Memory.xml",
+        "ref/netcoreapp2.1/_._",
+        "system.memory.4.5.4.nupkg.sha512",
+        "system.memory.nuspec",
+        "useSharedDesignerContext.txt",
+        "version.txt"
+      ]
+    },
     "System.Text.Encodings.Web/9.0.2": {
       "sha512": "/kCGdrXg0PXrvkHYyHubXJHcmCAvJrxTZ7g4XS6UCxY1JW79aMjtUW6UYNECHJmiyFZsZ/vUuWOM4CtNpiNt8Q==",
       "type": "package",
@@ -2063,8 +2197,8 @@
   },
   "projectFileDependencyGroups": {
     "net8.0": [
+      "EFCore.BulkExtensions.PostgreSql >= 8.1.3",
       "EFCore.NamingConventions >= 9.0.0",
-      "EntityFrameworkCore.PostgreSQL.SimpleBulks >= 8.0.0-preview.5",
       "Microsoft.EntityFrameworkCore >= 9.0.3",
       "Microsoft.Extensions.Configuration.Binder >= 9.0.2",
       "Microsoft.Extensions.Hosting >= 9.0.2",
@@ -2078,11 +2212,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Dev\\TestBulkDbLibraries\\TestBulkDbLibraries\\TestBulkDbLibraries.csproj",
+      "projectUniqueName": "C:\\dev\\test_bulk_libraries\\TestBulkDbLibraries\\TestBulkDbLibraries.csproj",
       "projectName": "TestBulkDbLibraries",
-      "projectPath": "C:\\Dev\\TestBulkDbLibraries\\TestBulkDbLibraries\\TestBulkDbLibraries.csproj",
+      "projectPath": "C:\\dev\\test_bulk_libraries\\TestBulkDbLibraries\\TestBulkDbLibraries.csproj",
       "packagesPath": "C:\\Users\\oded.coster\\.nuget\\packages\\",
-      "outputPath": "C:\\Dev\\TestBulkDbLibraries\\TestBulkDbLibraries\\obj\\",
+      "outputPath": "C:\\dev\\test_bulk_libraries\\TestBulkDbLibraries\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -2122,13 +2256,13 @@
       "net8.0": {
         "targetAlias": "net8.0",
         "dependencies": {
+          "EFCore.BulkExtensions.PostgreSql": {
+            "target": "Package",
+            "version": "[8.1.3, )"
+          },
           "EFCore.NamingConventions": {
             "target": "Package",
             "version": "[9.0.0, )"
-          },
-          "EntityFrameworkCore.PostgreSQL.SimpleBulks": {
-            "target": "Package",
-            "version": "[8.0.0-preview.5, )"
           },
           "Microsoft.EntityFrameworkCore": {
             "target": "Package",

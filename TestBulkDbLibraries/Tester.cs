@@ -1,4 +1,4 @@
-﻿using EntityFrameworkCore.PostgreSQL.SimpleBulks.BulkInsert;
+﻿using EFCore.BulkExtensions;
 using TestBulkDbLibraries.Database;
 using TestBulkDbLibraries.Entities;
 
@@ -38,48 +38,93 @@ public class Tester : ITester
                         EligibleForBonus = bonusEligible,
                     }
             ]
-        });
+        }).ToList();
+
+        await BulkExtensionsSimpleTransactionAsync(allManagers, cancellationToken);
+        //await BulkExtensionsSimpleAsync(allManagers, cancellationToken);
+        //await VanillaEfCoreAsync(allManagers, cancellationToken);
+    }
+
+    private async Task BulkExtensionsSimpleTransactionAsync(List<Manager> allManagers, CancellationToken cancellationToken)
+    {
+        /*
+         C#:
+         PostgresException: 42703: column "Promotions" of relation "employee" does not exist
+
+         DB:
+         ERROR:  column "Promotions" of relation "employee" does not exist
+         STATEMENT:  COPY "public"."employee" ("building_id", "created_at", "eligible_for_bonus", "location_id", "manager_id", "modified_at", "original_building_id", "provider_id", "provider_settings_id", "status", "Promotions") FROM STDIN (FORMAT BINARY);
+         LOG:  could not receive data from client: An existing connection was forcibly closed by the remote host.
+         */
 
         using var context = contextFactory.Create() as DatabaseContext;
 
-        //var transaction = await context!.Database.BeginTransactionAsync(cancellationToken);
+        var transaction = context!.Database.BeginTransaction();
 
-        context.BulkInsert(allManagers, options => { options.Timeout = 0; });
+        await context!.BulkInsertAsync(allManagers,
+                                    new BulkConfig
+                                    {
+                                        UseUnlogged = true,
+                                    },
+                        cancellationToken: cancellationToken);
 
+        var firstEmployee = allManagers.First().Employees.First();
 
-        foreach (var manager in allManagers)
+        var employees = allManagers.Select(m => new Employee
         {
-            Console.WriteLine($"Manager: {manager.Id} - {manager.DepartmentalId}");
-        }
+            ManagerId = m.Id,
+            LocationId = firstEmployee.LocationId,
+            BuildingId = firstEmployee.BuildingId,
+            OriginalBuildingId = firstEmployee.OriginalBuildingId,
+            ProviderId = firstEmployee.ProviderId,
+            ProviderSettingsId = firstEmployee.ProviderSettingsId,
+            Status = firstEmployee.Status,
+            EligibleForBonus = firstEmployee.EligibleForBonus,
+        }).ToList();
 
-        //var newSessions = allSamples.Select(s => new Session
-        //{
-        //    SampleId = s.Id,
-        //    ProjectSetupProjectId = projectSetupProjectId,
-        //    QuotaId = autoFieldingQuotaId,
-        //    OriginalQuotaId = autoFieldingQuotaId,
-        //    QuotaVendorId = quotaVendorId,
-        //    QuotaVendorLinkSettingsId = linkSettingsId,
-        //    Status = SessionStatus.Eligible,
-        //    IsTestSession = isTest
-        //});
+        await context!.BulkInsertAsync(employees,
+                            new BulkConfig
+                            {
+                                UseUnlogged = true,
+                            },
+                cancellationToken: cancellationToken);
 
-        //context.BulkInsert(newSessions, options => options.Timeout = 0);
+        await transaction.CommitAsync(cancellationToken);
+    }
 
-        //await transaction.CommitAsync(cancellationToken);
-
+    private async Task BulkExtensionsSimpleAsync(List<Manager> allManagers, CancellationToken cancellationToken)
+    {
         /*
-         * Working EF Core code 
-         
-        context.Set<Manager>().AddRange(managers);
-        await context.SaveChangesAsync(cancellationToken);
+         C#:
+         PostgresException: 42703: column "Promotions" of relation "employeeTempaa5d0fea" does not exist
+        
+         DB:
+         ERROR:  column "Promotions" of relation "employeeTempaa5d0fea" does not exist
+         STATEMENT:  COPY "public"."employeeTempaa5d0fea" ("id", "building_id", "created_at", "eligible_for_bonus", "location_id", "manager_id", "modified_at", "original_building_id", "provider_id", "provider_settings_id", "status", "Promotions") FROM STDIN (FORMAT BINARY);
+         ERROR:  current transaction is aborted, commands ignored until end of transaction block
+         STATEMENT:  DROP TABLE IF EXISTS "public"."employeeTempaa5d0fea"
+         LOG:  could not receive data from client: An existing connection was forcibly closed by the remote host.         
+        */
 
+        using var context = contextFactory.Create() as DatabaseContext;
+
+        await context!.BulkInsertAsync(allManagers,
+                                    new BulkConfig
+                                    {
+                                        IncludeGraph = true,
+                                        UseUnlogged = true,
+                                    },
+                        cancellationToken: cancellationToken);
+    }
+
+    private async Task VanillaEfCoreAsync(List<Manager> allManagers, CancellationToken cancellationToken)
+    {
+        // This works, possibly better to wrap in a transaction, but not relevant to this example.
         foreach (var managers in allManagers.Chunk(10))
         {
             using var context = contextFactory.Create();
             context.Set<Manager>().AddRange(managers);
             await context.SaveChangesAsync(cancellationToken);
         }
-        */
     }
 }

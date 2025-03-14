@@ -33,7 +33,7 @@ static void RunTester(IServiceProvider hostProvider)
     using IServiceScope scope = hostProvider.CreateScope();
     IServiceProvider provider = scope.ServiceProvider;
     var tester = provider.GetRequiredService<ITester>();
-    var idsToImport = Enumerable.Range(0, 10).Select(i => Guid.NewGuid().ToString()).ToList();
+    var idsToImport = Enumerable.Range(0, 100).Select(i => Guid.NewGuid().ToString()).ToList();
     tester.RunBulkImport(idsToImport, 5, 7, 6, 4, 20, 15, true, CancellationToken.None).Wait();
 }
 
@@ -46,6 +46,8 @@ static void RegisterDatabaseContext(IServiceCollection services, IConfiguration 
     var postgreSqlOptionsBuilder = new DbContextOptionsBuilder<DatabaseContext>();
 
     var dataSourceBuilder = new NpgsqlDataSourceBuilder(entityFrameworkConfiguration.DatabaseConnectionString);
+    dataSourceBuilder
+        .EnableDynamicJson();
 
     var dataSource = dataSourceBuilder.Build();
 

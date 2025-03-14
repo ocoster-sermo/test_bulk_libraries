@@ -23,5 +23,6 @@ CREATE TABLE employee (
     provider_id INTEGER,
     provider_settings_id INTEGER,
     status INTEGER NOT NULL,
-    eligible_for_bonus BOOLEAN NOT NULL
+    eligible_for_bonus BOOLEAN NOT NULL,
+	promotions JSONB
 );
