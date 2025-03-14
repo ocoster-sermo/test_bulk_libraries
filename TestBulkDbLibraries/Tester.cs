@@ -82,6 +82,14 @@ public class Tester : ITester
             EligibleForBonus = firstEmployee.EligibleForBonus,
         }).ToList();
 
+        /*
+         If using PropertiesToExclude , the error is:
+        
+         InvalidOperationException: PropertyName 'Promotions' specified in 'PropertiesToExclude' not found in Properties.
+
+         Same happens if I try "promotions" instead of "Promotions".
+         */
+
         await context!.BulkInsertAsync(employees,
                             new BulkConfig
                             {
