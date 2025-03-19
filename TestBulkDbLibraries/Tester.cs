@@ -1,4 +1,5 @@
-﻿using EFCore.BulkExtensions;
+﻿
+using System.Diagnostics;
 using TestBulkDbLibraries.Database;
 using TestBulkDbLibraries.Entities;
 
@@ -40,90 +41,104 @@ public class Tester : ITester
             ]
         }).ToList();
 
-        await BulkExtensionsSimpleTransactionAsync(allManagers, cancellationToken);
+        var stopwatch = new Stopwatch();
+        stopwatch.Start();
+
+        Console.WriteLine("Starting Bulk Import");
+        await ZBulkExtensionsSimpleAsync(allManagers, cancellationToken);
+        //await BulkExtensionsSimpleTransactionAsync(allManagers, cancellationToken);
         //await BulkExtensionsSimpleAsync(allManagers, cancellationToken);
         //await VanillaEfCoreAsync(allManagers, cancellationToken);
+        Console.WriteLine($"Finished Bulk Import - took {stopwatch.Elapsed:c}");
     }
 
-    private async Task BulkExtensionsSimpleTransactionAsync(List<Manager> allManagers, CancellationToken cancellationToken)
+
+    private async Task ZBulkExtensionsSimpleAsync(List<Manager> allManagers, CancellationToken cancellationToken)
     {
-        /*
-         C#:
-         PostgresException: 42703: column "Promotions" of relation "employee" does not exist
-
-         DB:
-         ERROR:  column "Promotions" of relation "employee" does not exist
-         STATEMENT:  COPY "public"."employee" ("building_id", "created_at", "eligible_for_bonus", "location_id", "manager_id", "modified_at", "original_building_id", "provider_id", "provider_settings_id", "status", "Promotions") FROM STDIN (FORMAT BINARY);
-         LOG:  could not receive data from client: An existing connection was forcibly closed by the remote host.
-         */
-
         using var context = contextFactory.Create() as DatabaseContext;
 
-        var transaction = context!.Database.BeginTransaction();
-
-        await context!.BulkInsertAsync(allManagers,
-                                    new BulkConfig
-                                    {
-                                        UseUnlogged = true,
-                                    },
-                        cancellationToken: cancellationToken);
-
-        var firstEmployee = allManagers.First().Employees.First();
-
-        var employees = allManagers.Select(m => new Employee
-        {
-            ManagerId = m.Id,
-            LocationId = firstEmployee.LocationId,
-            BuildingId = firstEmployee.BuildingId,
-            OriginalBuildingId = firstEmployee.OriginalBuildingId,
-            ProviderId = firstEmployee.ProviderId,
-            ProviderSettingsId = firstEmployee.ProviderSettingsId,
-            Status = firstEmployee.Status,
-            EligibleForBonus = firstEmployee.EligibleForBonus,
-        }).ToList();
-
-        /*
-         If using PropertiesToExclude , the error is:
-        
-         InvalidOperationException: PropertyName 'Promotions' specified in 'PropertiesToExclude' not found in Properties.
-
-         Same happens if I try "promotions" instead of "Promotions".
-         */
-
-        await context!.BulkInsertAsync(employees,
-                            new BulkConfig
-                            {
-                                UseUnlogged = true,
-                            },
-                cancellationToken: cancellationToken);
-
-        await transaction.CommitAsync(cancellationToken);
+        await context!.BulkInsertOptimizedAsync(allManagers, options => options.IncludeGraph = true, cancellationToken: cancellationToken);
     }
 
-    private async Task BulkExtensionsSimpleAsync(List<Manager> allManagers, CancellationToken cancellationToken)
-    {
-        /*
-         C#:
-         PostgresException: 42703: column "Promotions" of relation "employeeTempaa5d0fea" does not exist
-        
-         DB:
-         ERROR:  column "Promotions" of relation "employeeTempaa5d0fea" does not exist
-         STATEMENT:  COPY "public"."employeeTempaa5d0fea" ("id", "building_id", "created_at", "eligible_for_bonus", "location_id", "manager_id", "modified_at", "original_building_id", "provider_id", "provider_settings_id", "status", "Promotions") FROM STDIN (FORMAT BINARY);
-         ERROR:  current transaction is aborted, commands ignored until end of transaction block
-         STATEMENT:  DROP TABLE IF EXISTS "public"."employeeTempaa5d0fea"
-         LOG:  could not receive data from client: An existing connection was forcibly closed by the remote host.         
-        */
+    //private async Task BulkExtensionsSimpleTransactionAsync(List<Manager> allManagers, CancellationToken cancellationToken)
+    //{
+    //    /*
+    //     C#:
+    //     PostgresException: 42703: column "Promotions" of relation "employee" does not exist
 
-        using var context = contextFactory.Create() as DatabaseContext;
+    //     DB:
+    //     ERROR:  column "Promotions" of relation "employee" does not exist
+    //     STATEMENT:  COPY "public"."employee" ("building_id", "created_at", "eligible_for_bonus", "location_id", "manager_id", "modified_at", "original_building_id", "provider_id", "provider_settings_id", "status", "Promotions") FROM STDIN (FORMAT BINARY);
+    //     LOG:  could not receive data from client: An existing connection was forcibly closed by the remote host.
+    //     */
 
-        await context!.BulkInsertAsync(allManagers,
-                                    new BulkConfig
-                                    {
-                                        IncludeGraph = true,
-                                        UseUnlogged = true,
-                                    },
-                        cancellationToken: cancellationToken);
-    }
+    //    using var context = contextFactory.Create() as DatabaseContext;
+
+    //    var transaction = context!.Database.BeginTransaction();
+
+    //    await context!.BulkInsertAsync(allManagers,
+    //                                new BulkConfig
+    //                                {
+    //                                    UseUnlogged = true,
+    //                                },
+    //                    cancellationToken: cancellationToken);
+
+    //    var firstEmployee = allManagers.First().Employees.First();
+
+    //    var employees = allManagers.Select(m => new Employee
+    //    {
+    //        ManagerId = m.Id,
+    //        LocationId = firstEmployee.LocationId,
+    //        BuildingId = firstEmployee.BuildingId,
+    //        OriginalBuildingId = firstEmployee.OriginalBuildingId,
+    //        ProviderId = firstEmployee.ProviderId,
+    //        ProviderSettingsId = firstEmployee.ProviderSettingsId,
+    //        Status = firstEmployee.Status,
+    //        EligibleForBonus = firstEmployee.EligibleForBonus,
+    //    }).ToList();
+
+    //    /*
+    //     If using PropertiesToExclude , the error is:
+
+    //     InvalidOperationException: PropertyName 'Promotions' specified in 'PropertiesToExclude' not found in Properties.
+
+    //     Same happens if I try "promotions" instead of "Promotions".
+    //     */
+
+    //    await context!.BulkInsertAsync(employees,
+    //                        new BulkConfig
+    //                        {
+    //                            UseUnlogged = true,
+    //                        },
+    //            cancellationToken: cancellationToken);
+
+    //    await transaction.CommitAsync(cancellationToken);
+    //}
+
+    //private async Task BulkExtensionsSimpleAsync(List<Manager> allManagers, CancellationToken cancellationToken)
+    //{
+    //    /*
+    //     C#:
+    //     PostgresException: 42703: column "Promotions" of relation "employeeTempaa5d0fea" does not exist
+
+    //     DB:
+    //     ERROR:  column "Promotions" of relation "employeeTempaa5d0fea" does not exist
+    //     STATEMENT:  COPY "public"."employeeTempaa5d0fea" ("id", "building_id", "created_at", "eligible_for_bonus", "location_id", "manager_id", "modified_at", "original_building_id", "provider_id", "provider_settings_id", "status", "Promotions") FROM STDIN (FORMAT BINARY);
+    //     ERROR:  current transaction is aborted, commands ignored until end of transaction block
+    //     STATEMENT:  DROP TABLE IF EXISTS "public"."employeeTempaa5d0fea"
+    //     LOG:  could not receive data from client: An existing connection was forcibly closed by the remote host.         
+    //    */
+
+    //    using var context = contextFactory.Create() as DatabaseContext;
+
+    //    await context!.BulkInsertAsync(allManagers,
+    //                                new BulkConfig
+    //                                {
+    //                                    IncludeGraph = true,
+    //                                    UseUnlogged = true,
+    //                                },
+    //                    cancellationToken: cancellationToken);
+    //}
 
     private async Task VanillaEfCoreAsync(List<Manager> allManagers, CancellationToken cancellationToken)
     {
